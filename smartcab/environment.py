@@ -1,8 +1,12 @@
 import time
 import random
+import os
 from collections import OrderedDict
 
 from simulator import Simulator
+
+script_dir = os.path.dirname(__file__)
+path = os.path.join(script_dir, '../report/output_random3.txt')
 
 class TrafficLight(object):
     """A traffic light that switches periodically."""
@@ -117,6 +121,8 @@ class Environment(object):
             if self.enforce_deadline and self.agent_states[self.primary_agent]['deadline'] <= 0:
                 self.done = True
                 print "Environment.reset(): Primary agent could not reach destination within deadline!"
+                with open(path, 'a') as file:
+                    file.write("- Agent hasn't reached the destination on time\n")
             self.agent_states[self.primary_agent]['deadline'] -= 1
 
     def sense(self, agent):
@@ -192,6 +198,8 @@ class Environment(object):
                     reward += 10  # bonus
                 self.done = True
                 print "Environment.act(): Primary agent has reached destination!"  # [debug]
+                with open(path, 'a') as file:
+                    file.write("+ Agent reached the destination on time\n")
             self.status_text = "state: {}\naction: {}\nreward: {}".format(agent.get_state(), action, reward)
             #print "Environment.act() [POST]: location: {}, heading: {}, action: {}, reward: {}".format(location, heading, action, reward)  # [debug]
 
