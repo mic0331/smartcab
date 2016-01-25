@@ -46,6 +46,8 @@ Run this agent within the simulation environment with `enforce_deadline` set to 
 
 *In your report, mention what you see in the agent’s behavior. Does it eventually make it to the target location?*
 
+> the implementation of the basic agent is available in `agent.py`
+
 > The random agent is eventually reaching the destination with variables at play (other vehicles, oncoming traffic, traffic lights, etc) but the approach to reach the goal is clearly random and not optimal. In fact the agent is not optimising the rewards gain.  The agent does not prefer actions that it has tried in the past and found to be effective in producing reward.  In fact the agent is constantly in “discovery” mode where he try new action without any knowledge of the past rewarding (or not) actions.
 The agent does not exploit what it has already discover in order to obtain reward.  For example the agent does not understand, run after run, that running a red-light produce bad reward.
 We noticed that several times, the agent, being close to the goal choose a different direction than the prefered to reach the destination.
