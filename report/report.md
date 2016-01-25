@@ -48,7 +48,8 @@ Run this agent within the simulation environment with `enforce_deadline` set to 
 
 > The random agent is eventually reaching the destination with variables at play (other vehicles, oncoming traffic, traffic lights, etc) but the approach to reach the goal is clearly random and not optimal. In fact the agent is not optimising the rewards gain.  The agent does not prefer actions that it has tried in the past and found to be effective in producing reward.  In fact the agent is constantly in “discovery” mode where he try new action without any knowledge of the past rewarding (or not) actions.
 The agent does not exploit what it has already discover in order to obtain reward.  For example the agent does not understand, run after run, that running a red-light produce bad reward.
-I also noticed that several times, the agent, being close to the goal choose a different direction than the prefered to reach the destination.
+We noticed that several times, the agent, being close to the goal choose a different direction than the prefered to reach the destination.
+We can also remark the fact that the agent sometimes remain in position (action = `None`) even when there is no oncoming traffic or red light.
 
 > In order to compare the performance of the agent, we force `enfore_deadline` to `True` and report the results of 100 trials made with an `update_delay` of 0.2.
 Results for the random agent can be seen in the `output_random1.txt`, `output_random2.txt` and `output_random3.txt` files available the report directory.
@@ -65,9 +66,7 @@ At each time step, process the inputs and update the current state. Run it again
 
 > We have many options base the state update.  For example we can use the `next_waypoint` from the planner or traffic light or even the traffic data of potential cars coming on the left or right.  The deadline is also another factor that can be used to update the state.
 
-> For this model we choose to use the data available at each interesection.  this will help the agent to learn the traffic light rules for each possible variation of the environment.
-We also decided to use the result of `next_waypoint` to defined the target to reach the desitnation.  The agent can use this information to act properly to reach the destination in an efficient manner.
-
+> For this model we choose to use the data available at each interesection.  This include the traffic lights (red / green), the oncoming traffic (left, right or None) from 3 other cars (input[1], input[2], input[3]). We also decided to use the result of `next_waypoint` to defined the target to reach the desitnation.  The agent can use this information to act properly to reach the destination in an efficient manner.
 
 ### Implement Q-Learning
 Implement the Q-Learning algorithm by initializing and updating a table/mapping of Q-values at each time step. Now, instead of randomly selecting an action, pick the best action available from the current state based on Q-values, and return that.
@@ -77,21 +76,42 @@ Run it again, and observe the behavior.
 
 *What changes do you notice in the agent’s behavior?*
 
+> Q-Learning is implemented in it's own class `QLearn.py`.  
+We can notice that QLearning give to the agent a better appreciation of the world.  He is learning the traffic lights rules and is trying the reach the destination.
+
+> For example, we can notice that the agent doesn't choose to stay in position anymore in case of no traffic of green light.  This is already a nice improvment.  We can also notice that the agent is not choosing the red light direction once he know the bad impact of this choice.
+
 ###Enhance the driving agent
 Apply the reinforcement learning techniques you have learnt, and tweak the parameters (e.g. learning rate, discount factor, action selection method, etc.), to improve the performance of your agent. Your goal is to get it to a point so that within 100 trials, the agent is able to learn a feasible policy - i.e. reach the destination within the allotted time, with net reward remaining positive.
 
 *Report what changes you made to your basic implementation of Q-Learning to achieve the final version of the agent. How well does it perform?*
 
+> In this implementation we introduce exploration instead of the normal tactic of choosing the max Q value. An `epsion` value has been added so that we generate a random number.  If that value is less than `epsion`, a random action is choosen, otherwise, the max q value is selected from the Q table.
+
+> In order to avoid the problem of picking a random move even if we know for sure the best option, a special logic has been implemented to cover this case.
+
+> If the randomly generated value is less than `epsilon`, then randomly add values to the q values for this state, scaled by the maximum q value of this state. In this way, exploration is added, but we’re still using the learned q values as a basis for choosing the action, rather than just randomly choosing an action completely at random.
+
 *Does your agent get close to finding an optimal policy, i.e. reach the destination in the minimum possible time, and not incur any penalties?*
 
-### Evaluation
+> The agent is reaching destination after some trial steps. Several value of alpha, gamma and epsilon has been tried out in order to have the best learning experience for our agent.
+> The first line bellow is an implementation where the exploration is not activated.
 
-Your project will be reviewed by a Udacity reviewer against **<a href="https://docs.google.com/document/d/1ifFWrkX-Kwhi2cKJJ_Qa0PYgPqWlJnBJK-cQGDbTvAY/pub" target="_blank">this rubric</a>**. Be sure to review it thoroughly before you submit. All criteria must "meet specifications" in order to pass.
+| alpha     | gamma     | epsion    | results   |
+| ----------|:---------:|:---------:|:----------|
+| 0.2       | 0.5       | 1         |  36 wins  |
+| 0.2       | 0.5       | 0.1       |  57 wins  |
+| 0.2       | 0.8       | 0.1       |  59 wins  |
+| 0.1       | 0.8       | 0.1       |  20 wins  |
+| 0.1       | 0.9       | 0.1       |  65 wins  |
+| 0.5       | 0.9       | 0.1       |  34 wins  | 
+| 0.1       | 0.9       | 0.05      |  69 wins  | 
+| 0.05      | 0.9       | 0.05      |  84 wins  |
 
-### Submission
-When you're ready to submit your project go back to your <a href="https://www.udacity.com/me" target="_blank">Udacity Home</a>, click on Project 4, and we'll walk you through the rest of the submission process. You need to turn in your final code (`agent.py` only) and report as a PDF file.
+> The results of these simulation are available in the report directory.
 
-If you are having any problems submitting your project or wish to check on the status of your submission, please email us at **project@udacity.com** or visit us in the <a href="http://discussions.udacity.com" target="_blank">discussion forums</a>.
+> By trial and error we can isolate the ideal parameter combination. The last line in the above table is the best results we can reached with the Q-Learning implementation.
+> Better results may be possible by constanlty reducing the random factor once the agent is getting more and more skills over time.
 
-### What's Next?
-You will get an email as soon as your reviewer has feedback for you. In the meantime, review your next project and feel free to get started on it or the courses supporting it!
+# reference
+[Studywolf - REINFORCEMENT LEARNING](https://studywolf.wordpress.com/2012/11/25/reinforcement-learning-q-learning-and-exploration/)

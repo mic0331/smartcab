@@ -6,7 +6,7 @@ from collections import OrderedDict
 from simulator import Simulator
 
 script_dir = os.path.dirname(__file__)
-path = os.path.join(script_dir, '../report/output_random3.txt')
+path = os.path.join(script_dir, '../report/output_qlearning.txt')
 
 class TrafficLight(object):
     """A traffic light that switches periodically."""
