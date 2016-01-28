@@ -68,7 +68,9 @@ At each time step, process the inputs and update the current state. Run it again
 
 > We have many options base the state update.  For example we can use the `next_waypoint` from the planner or traffic light or even the traffic data of potential cars coming on the left or right.  The deadline is also another factor that can be used to update the state.
 
-> For this model we choose to use the data available at each interesection.  This include the traffic lights (red / green), the oncoming traffic (left, right or None) from 3 other cars (input[1], input[2], input[3]). We also decided to use the result of `next_waypoint` to defined the target to reach the desitnation.  The agent can use this information to act properly to reach the destination in an efficient manner.
+> For this model we choose to use the data available at each interesection.  This include the traffic lights (red / green), the oncoming traffic (left, right or None) from 2 other cars (input[1] = oncoming, input[3] = left). Due to the circulation rules in US, the traffic coming from the right does not matter and will therefore be ignore from the states.
+
+> We also decided to use the result of `next_waypoint` to defined the target to reach the desitnation.  The agent can use this information to act properly to reach the destination in an efficient manner.
 
 ### Implement Q-Learning
 Implement the Q-Learning algorithm by initializing and updating a table/mapping of Q-values at each time step. Now, instead of randomly selecting an action, pick the best action available from the current state based on Q-values, and return that.
@@ -101,14 +103,14 @@ Apply the reinforcement learning techniques you have learnt, and tweak the param
 
 | alpha     | gamma     | epsion    | results   |
 | ----------|:---------:|:---------:|:----------|
-| 0.2       | 0.5       | 1         |  36 wins  |
-| 0.2       | 0.5       | 0.1       |  57 wins  |
-| 0.2       | 0.8       | 0.1       |  59 wins  |
-| 0.1       | 0.8       | 0.1       |  20 wins  |
-| 0.1       | 0.9       | 0.1       |  65 wins  |
-| 0.5       | 0.9       | 0.1       |  34 wins  | 
-| 0.1       | 0.9       | 0.05      |  69 wins  | 
-| 0.05      | 0.9       | 0.05      |  84 wins  |
+| 0.2       | 0.5       | 1         |  13 wins  |
+| 0.2       | 0.5       | 0.1       |  67 wins  |
+| 0.2       | 0.8       | 0.1       |  39 wins  |
+| 0.1       | 0.8       | 0.1       |  74 wins  |
+| 0.1       | 0.9       | 0.1       |  76 wins  |
+| 0.5       | 0.9       | 0.1       |  56 wins  |  
+| 0.05      | 0.9       | 0.05      |  60 wins  |
+| 0.1       | 0.9       | 0.05      |  83 wins  |
 
 > The results of these simulation are available in the report directory.
 

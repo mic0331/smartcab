@@ -12,7 +12,6 @@ class QTable(object):
         self.Q = dict()
 
     def get(self, state, action):
-        print state
         key = (state, action)
         return self.Q.get(key, None)
 
@@ -52,20 +51,22 @@ class QLearn(Agent):
             action = self.possible_actions[action_idx]
         return action
     
-    def Q_learn(self, state, action, reward, value):        
-        previous_q = self.Q.get(state, action)
-        if previous_q is None:
-            previous_q = reward
-        else:
-            previous_q += self.alpha * (value - previous_q)
-
-        self.Q.set(state, action, previous_q)
-
-    def Q_post(self, state, action, reward):
+    def Q_learn(self, state, action, reward, new_q):       
         q = self.Q.get(state, action)
         if q is None:
             q = reward
-        self.Q_learn(state, action, reward, reward + self.gamma * q)
+        else:
+            q += self.alpha * new_q
+
+        self.Q.set(state, action, q)
+
+    def Q_post(self, state, action, next_state, reward):
+        # Qval(State,action) = currentQval(State,action) - alpha*(newQval - currenQval(State,action)) 
+        q = [self.Q.get(next_state, a) for a in self.possible_actions]
+        future_rewards = max(q)         
+        if future_rewards is None:
+            future_rewards = 0.0
+        self.Q_learn(state, action, reward, reward - self.gamma * future_rewards)  
         self.Q.report() ## Debug
 
 class QLearningAgent(Agent):
@@ -76,7 +77,7 @@ class QLearningAgent(Agent):
         self.color = 'red'  # override color
         self.planner = RoutePlanner(self.env, self)  # simple route planner to get next_waypoint
         self.possible_actions= Environment.valid_actions
-        self.ai = QLearn(epsilon=.05, alpha=0.05, gamma=0.9)        
+        self.ai = QLearn(epsilon=.05, alpha=0.1, gamma=0.9)        
 
     def reset(self, destination=None):
         self.planner.route_to(destination)      
@@ -88,14 +89,18 @@ class QLearningAgent(Agent):
         inputs = inputs.items()
         deadline = self.env.get_deadline(self)
 
-        self.state = (inputs[0],inputs[1],inputs[2],inputs[3],self.next_waypoint)
+        self.state = (inputs[0],inputs[1],inputs[3],self.next_waypoint)
         
         action = self.ai.Q_move(self.state)
         
         # Execute action and get reward
         reward = self.env.act(self, action)
 
-        self.ai.Q_post(self.state, action, reward)
+        inputs2 = self.env.sense(self) 
+        inputs2 = inputs2.items()
+        next_state = (inputs2[0],inputs2[1],inputs2[3],self.next_waypoint)
+
+        self.ai.Q_post(self.state, action, next_state, reward)
 
         print "LearningAgent.update(): deadline = {}, inputs = {}, action = {}, reward = {}".format(deadline, inputs, action, reward)  # [debug]
 
