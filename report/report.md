@@ -44,7 +44,7 @@ And produces some random move/action `(None, 'forward', 'left', 'right')`. Don�
 
 Run this agent within the simulation environment with `enforce_deadline` set to `False` (see `run` function in `agent.py`), and observe how it performs. In this mode, the agent is given unlimited time to reach the destination. The current state, action taken by your agent and reward/penalty earned are shown in the simulator.
 
-*In your report, mention what you see in the agent’s behavior. Does it eventually make it to the target location?*
+*What do you see in the agent’s behavior. Does it eventually make it to the target location?*
 
 > the implementation of the basic agent is available in `agent.py`
 
@@ -90,7 +90,7 @@ Apply the reinforcement learning techniques you have learnt, and tweak the param
 
 *Report what changes you made to your basic implementation of Q-Learning to achieve the final version of the agent. How well does it perform?*
 
-> In this implementation we introduce exploration instead of the normal tactic of choosing the max Q value. An `epsion` value has been added so that we generate a random number.  If that value is less than `epsion`, a random action is choosen, otherwise, the max q value is selected from the Q table.
+> In this implementation we introduce exploration instead of the normal tactic of choosing the max Q value. An `epsilon` value has been added so that we generate a random number.  If that value is less than `epsion`, a random action is choosen, otherwise, the max q value is selected from the Q table.
 
 > In order to avoid the problem of picking a random move even if we know for sure the best option, a special logic has been implemented to cover this case.
 
