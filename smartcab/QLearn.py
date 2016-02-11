@@ -5,7 +5,10 @@ from planner import RoutePlanner
 from simulator import Simulator
 
 script_dir = os.path.dirname(__file__)
+
 path = os.path.join(script_dir, '../report/output_qlearning.txt')
+if not os.path.exists('file'):
+    open(path, 'w').close() 
 
 class QTable(object):
     def __init__(self):
